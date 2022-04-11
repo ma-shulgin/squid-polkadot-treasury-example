@@ -15,24 +15,29 @@ export function getProposedSpendExtrinsic(ctx: EventHandlerContext): ProposedSpe
   const extrinsic = new TreasuryProposeSpendCall(exctx);
 
   if (extrinsic.isV0) {
-    const { value, beneficiary } = extrinsic.asV0;
-    return { value, beneficiary };
+    let { value, beneficiary } = extrinsic.asV0;
+    return { value, beneficiaryId : beneficiary };
   }
   if (extrinsic.isV28) {
-    const { value, beneficiary } = extrinsic.asV28;
-
-    return { value, beneficiary };
+    let { value, beneficiary } = extrinsic.asV28;
+    if (beneficiary.__kind == "Index") throw new Error("Wrong Account address")
+    const beneficiaryId = beneficiary.value
+    
+    return { value, beneficiaryId };
   }
   if (extrinsic.isV9110) {
     const { value, beneficiary } = extrinsic.asV9110;
-    return { value, beneficiary };
+    if (beneficiary.__kind == "Index") throw new Error("Wrong Accunt address")
+    const beneficiaryId = beneficiary.value
+    
+    return { value, beneficiaryId };
   }
   throw new Error("No Runtime version found");
 }
 
 export interface ProposedSpend {
   value: bigint;
-  beneficiary: Uint8Array | GenericMultiAddress | MultiAddress;
+  beneficiaryId: Uint8Array;
 }
 
 export class MissingExtrinsicError extends Error {

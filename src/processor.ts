@@ -37,7 +37,7 @@ async function processProposed(ctx: EventHandlerContext): Promise<void> {
   const treasuryProposal = await getOrCreate(ctx.store, TreasuryProposal, proposalIndex.toString());
   treasuryProposal.status = TreasuryStatus.PROPOSED;
   treasuryProposal.value = ext.value;
-  // treasuryProposal.beneficiary = encodeID(ext.beneficiary, 0);
+  treasuryProposal.beneficiary = encodeID(ext.beneficiaryId, 0) ?? "None";
 
   await ctx.store.save(treasuryProposal);
 }
